@@ -12,6 +12,9 @@
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/CustomEase.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<!-- Motion One: vanilla-friendly equivalent of framer-motion (same author).
+     Exposes window.Motion with animate(), spring(), scroll(), inView(), stagger(). -->
+<script src="https://cdn.jsdelivr.net/npm/motion@11.11.17/dist/motion.min.js"></script>
 <script type="importmap">
 {
   "imports": {
@@ -1077,6 +1080,11 @@ import * as THREE from 'three';
 import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { SMAAPass } from 'three/addons/postprocessing/SMAAPass.js';
 
 (function() {
   'use strict';
@@ -1149,7 +1157,7 @@ import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUnifo
   const cssWrap    = document.getElementById('css3d-container');
 
   /* ── Renderers ── */
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+  const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(heroEl.clientWidth, heroEl.clientHeight);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -1172,6 +1180,30 @@ import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUnifo
   const camera = new THREE.PerspectiveCamera(32, heroEl.clientWidth / heroEl.clientHeight, 0.1, 100);
   camera.position.set(0, 1.05, 7.4);
   camera.lookAt(0, 0.6, 0);
+
+  /* ── Postprocessing: Render → Bloom → SMAA → Output ── */
+  const composer = new EffectComposer(renderer);
+  composer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  composer.setSize(heroEl.clientWidth, heroEl.clientHeight);
+  composer.addPass(new RenderPass(scene, camera));
+
+  /* Cinematic bloom: tuned soft + selective (threshold prevents
+     bright lid edges from blooming — only true emissive sources do). */
+  const bloomPass = new UnrealBloomPass(
+    new THREE.Vector2(heroEl.clientWidth, heroEl.clientHeight),
+    0.55,   /* strength */
+    0.45,   /* radius */
+    0.82    /* threshold (high = selective) */
+  );
+  composer.addPass(bloomPass);
+
+  /* SMAA replaces MSAA after post — bloom kills hardware AA */
+  const pixelRatio = renderer.getPixelRatio();
+  const smaaPass = new SMAAPass(heroEl.clientWidth * pixelRatio, heroEl.clientHeight * pixelRatio);
+  composer.addPass(smaaPass);
+
+  /* Final tone-map + color space conversion */
+  composer.addPass(new OutputPass());
 
   /* ── Environment (procedural room → IBL) ── */
   const pmrem = new THREE.PMREMGenerator(renderer);
@@ -1388,6 +1420,16 @@ import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUnifo
   notch.position.set(0, 1.97, 0.025);
   lid.add(notch);
 
+  /* ── Bloom-friendly screen halo — slightly larger emissive plane
+     behind the screen panel. Drives the cinematic "screen-on" glow. ── */
+  const haloMat = new THREE.MeshBasicMaterial({
+    color: 0x6aa9ff, transparent: true, opacity: 0, depthWrite: false,
+    blending: THREE.AdditiveBlending,
+  });
+  const halo = new THREE.Mesh(new THREE.PlaneGeometry(3.4, 2.2), haloMat);
+  halo.position.set(0, 1.025, 0.005);
+  lid.add(halo);
+
   /* ── CSS3D screen — actual portfolio HTML rendered in 3D ──
      The .screen-ui DOM is authored at 1280×800 px. We scale
      the CSS3DObject so that 1280 px → 2.92 world units (matching
@@ -1440,6 +1482,52 @@ import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUnifo
   contactShadow.position.y = -0.45;
   scene.add(contactShadow);
 
+  /* ── Atmospheric particles — drifting dust catching light ── */
+  const PARTICLE_COUNT = 140;
+  const particleGeo = new THREE.BufferGeometry();
+  const positions = new Float32Array(PARTICLE_COUNT * 3);
+  const velocities = new Float32Array(PARTICLE_COUNT * 3);
+  const sizes = new Float32Array(PARTICLE_COUNT);
+  for (let i = 0; i < PARTICLE_COUNT; i++) {
+    positions[i*3]   = (Math.random() - 0.5) * 9;
+    positions[i*3+1] = Math.random() * 4 - 0.5;
+    positions[i*3+2] = (Math.random() - 0.5) * 4 + 1;
+    velocities[i*3]   = (Math.random() - 0.5) * 0.0008;
+    velocities[i*3+1] = Math.random() * 0.001 + 0.0003;
+    velocities[i*3+2] = (Math.random() - 0.5) * 0.0006;
+    sizes[i] = Math.random() * 0.018 + 0.006;
+  }
+  particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  particleGeo.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+  /* Soft round sprite via canvas */
+  const particleTex = (function() {
+    const c = document.createElement('canvas');
+    c.width = c.height = 64;
+    const ctx = c.getContext('2d');
+    const g = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+    g.addColorStop(0, 'rgba(255,255,255,1)');
+    g.addColorStop(0.35, 'rgba(255,255,255,0.55)');
+    g.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, 64, 64);
+    const t = new THREE.CanvasTexture(c);
+    t.colorSpace = THREE.SRGBColorSpace;
+    return t;
+  })();
+
+  const particleMat = new THREE.PointsMaterial({
+    map: particleTex,
+    size: 0.045,
+    sizeAttenuation: true,
+    transparent: true,
+    opacity: 0.55,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+    color: 0xffffff,
+  });
+  const particles = new THREE.Points(particleGeo, particleMat);
+  scene.add(particles);
+
   /* ── Cinematic initial pose ── */
   const POSE = {
     closed: { lidX: Math.PI / 2 - 0.005, camY: 1.05, camZ: 7.4, macRotY: -0.08, macRotX: 0.04, lookY: 0.6, scrnOp: 0, glowI: 0, apple: 0 },
@@ -1475,6 +1563,7 @@ import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUnifo
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
     renderer.setSize(w, h);
+    composer.setSize(w, h);
     cssRenderer.setSize(w, h);
   }
   window.addEventListener('resize', resize);
@@ -1528,10 +1617,12 @@ import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUnifo
       const e = easeOut3(t);
       screenDOM.style.opacity = String(e);
       screenGlow.intensity = lerp(0, POSE.open.glowI, e);
-      appleLogoMat.emissiveIntensity = lerp(0, 0.45, e);
+      appleLogoMat.emissiveIntensity = lerp(0, 0.9, e);
       screenSpill.style.opacity = String(e * 0.8);
       /* Brighten screen panel slightly so edges blend with HTML */
       screenPanelMat.color.setRGB(lerp(0, 0.04, e), lerp(0, 0.05, e), lerp(0, 0.08, e));
+      /* Halo behind the screen — drives the bloom */
+      haloMat.opacity = e * 0.7;
     }
 
     /* ── Phase D · 0.55 → 0.88 — Cinematic dolly into the screen ── */
@@ -1589,7 +1680,25 @@ import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUnifo
     /* Keep camera looking at the screen / lookTarget */
     camera.lookAt(lookTarget);
 
-    renderer.render(scene, camera);
+    /* — Drifting atmospheric particles — */
+    const pos = particleGeo.attributes.position.array;
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      pos[i*3]   += velocities[i*3];
+      pos[i*3+1] += velocities[i*3+1];
+      pos[i*3+2] += velocities[i*3+2];
+      /* Wrap when out of bounds */
+      if (pos[i*3+1] > 3.6) {
+        pos[i*3]   = (Math.random() - 0.5) * 9;
+        pos[i*3+1] = -0.5;
+        pos[i*3+2] = (Math.random() - 0.5) * 4 + 1;
+      }
+    }
+    particleGeo.attributes.position.needsUpdate = true;
+    /* Particles fade out as we zoom into the screen */
+    particleMat.opacity = 0.55 * (1 - clamp01((scrollP - 0.5) * 3));
+
+    /* Composer drives the post-processed render; CSS3D overlays on top */
+    composer.render();
     cssRenderer.render(scene, camera);
     requestAnimationFrame(tick);
   }
