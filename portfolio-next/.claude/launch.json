@@ -1,0 +1,16 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "portfolio-next-dev",
+      "runtimeExecutable": "/Users/macbookpro/.local/node/bin/node",
+      "runtimeArgs": [
+        "/Users/macbookpro/Documents/-/portfolio-next/node_modules/next/dist/bin/next",
+        "dev",
+        "--port",
+        "3030"
+      ],
+      "port": 3030
+    }
+  ]
+}
