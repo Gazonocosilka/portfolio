@@ -1,0 +1,1712 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Inna Krachun — UX Designer, Branding, Creative Development">
+<title>Inna Krachun — Designer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/CustomEase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.165.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.165.0/examples/jsm/"
+  }
+}
+</script>
+<style>
+/* ─────────────────────────────────────────────
+   CUSTOM PROPERTIES
+───────────────────────────────────────────── */
+:root {
+  --font-display: 'Plus Jakarta Sans', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.83, 0, 0.17, 1);
+}
+
+[data-theme="dark"] {
+  --bg: #09090b;
+  --bg2: #0d0d10;
+  --surface: #111116;
+  --surface2: #18181e;
+  --border: #1f1f2a;
+  --border2: #2a2a38;
+  --accent: #4f8ef7;
+  --accent2: #7ab3ff;
+  --accent-glow: rgba(79,142,247,0.12);
+  --accent-glow2: rgba(79,142,247,0.06);
+  --text-1: #f0f0f4;
+  --text-2: #8a8aa0;
+  --text-3: #555568;
+  --card-shadow: 0 32px 80px rgba(0,0,0,0.6);
+  --nav-bg: rgba(9,9,11,0.8);
+  --hero-grad: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(79,142,247,0.07) 0%, transparent 70%);
+  /* MacBook colors */
+  --mac-body: #2e2e32;
+  --mac-body2: #242428;
+  --mac-body3: #1e1e22;
+  --mac-keyboard: #1c1c1e;
+  --mac-key: #2a2a2e;
+  --mac-trackpad: #1a1a1c;
+  --mac-edge: #161618;
+  --mac-hinge: #1a1a1c;
+  --mac-screen-bg: #07070a;
+}
+
+[data-theme="light"] {
+  --bg: #f9f8f5;
+  --bg2: #f2f1ee;
+  --surface: #ededea;
+  --surface2: #e5e4e0;
+  --border: #ddddd8;
+  --border2: #d0d0ca;
+  --accent: #1a5fd4;
+  --accent2: #2070e8;
+  --accent-glow: rgba(26,95,212,0.1);
+  --accent-glow2: rgba(26,95,212,0.05);
+  --text-1: #0c0c10;
+  --text-2: #5a5a6e;
+  --text-3: #9a9ab0;
+  --card-shadow: 0 32px 80px rgba(0,0,0,0.12);
+  --nav-bg: rgba(249,248,245,0.85);
+  --hero-grad: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(26,95,212,0.05) 0%, transparent 70%);
+  --mac-body: #c0c0c2;
+  --mac-body2: #b0b0b2;
+  --mac-body3: #a0a0a2;
+  --mac-keyboard: #b8b8ba;
+  --mac-key: #c0c0c2;
+  --mac-trackpad: #a8a8aa;
+  --mac-edge: #909092;
+  --mac-hinge: #888888;
+  --mac-screen-bg: #07070a;
+}
+
+/* ─────────────────────────────────────────────
+   RESET & BASE
+───────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: auto; font-size: 16px; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text-1);
+  overflow-x: hidden;
+  transition: background 0.5s, color 0.5s;
+  cursor: none;
+}
+::selection { background: var(--accent-glow); color: var(--accent2); }
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+button { border: none; background: none; cursor: none; font-family: inherit; }
+
+/* ─────────────────────────────────────────────
+   SCROLL PROGRESS
+───────────────────────────────────────────── */
+#scroll-progress {
+  position: fixed; top: 0; left: 0;
+  width: 100%; height: 1.5px; z-index: 9999;
+  transform-origin: left; transform: scaleX(0);
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  pointer-events: none;
+}
+
+/* ─────────────────────────────────────────────
+   CUSTOM CURSOR
+───────────────────────────────────────────── */
+#cursor {
+  position: fixed; width: 10px; height: 10px;
+  background: var(--text-1); border-radius: 50%;
+  pointer-events: none; z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s var(--ease-out), height 0.3s var(--ease-out), background 0.3s;
+  mix-blend-mode: difference;
+}
+#cursor-ring {
+  position: fixed; width: 34px; height: 34px;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 50%; pointer-events: none; z-index: 9997;
+  transform: translate(-50%, -50%);
+  transition: width 0.4s var(--ease-out), height 0.4s var(--ease-out), border-color 0.3s;
+}
+.cursor-hover #cursor { width: 18px; height: 18px; }
+.cursor-hover #cursor-ring { width: 54px; height: 54px; border-color: var(--accent); opacity: 0.5; }
+.cursor-active #cursor { width: 7px; height: 7px; }
+
+/* ─────────────────────────────────────────────
+   NAVIGATION
+───────────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 48px; height: 68px;
+  transition: background 0.4s, backdrop-filter 0.4s, border-color 0.4s;
+  border-bottom: 1px solid transparent;
+}
+nav.scrolled {
+  background: var(--nav-bg);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-color: var(--border);
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 12px;
+  font-family: var(--font-display); font-weight: 700; font-size: 15px;
+}
+.nav-logo .monogram {
+  width: 32px; height: 32px; background: var(--accent); border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800; color: #fff; flex-shrink: 0;
+}
+.nav-links { display: flex; align-items: center; gap: 36px; list-style: none; }
+.nav-links a {
+  font-size: 14px; font-weight: 500; color: var(--text-2); position: relative;
+  transition: color 0.3s;
+}
+.nav-links a::after {
+  content: ''; position: absolute; bottom: -2px; left: 0;
+  width: 0; height: 1px; background: var(--accent);
+  transition: width 0.35s var(--ease-out);
+}
+.nav-links a:hover { color: var(--text-1); }
+.nav-links a:hover::after { width: 100%; }
+.nav-right { display: flex; align-items: center; gap: 16px; }
+.theme-toggle {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 1px solid var(--border); display: flex; align-items: center;
+  justify-content: center; color: var(--text-2);
+  transition: color 0.3s, border-color 0.3s, background 0.3s; background: transparent;
+}
+.theme-toggle:hover { color: var(--text-1); border-color: var(--border2); background: var(--surface); }
+.theme-toggle svg { width: 15px; height: 15px; }
+.nav-cta {
+  padding: 8px 20px; border-radius: 100px;
+  font-size: 13px; font-weight: 600; font-family: var(--font-display);
+  background: var(--text-1); color: var(--bg);
+  transition: opacity 0.3s, transform 0.3s;
+}
+.nav-cta:hover { opacity: 0.85; transform: translateY(-1px); }
+
+/* ─────────────────────────────────────────────
+   HERO
+───────────────────────────────────────────── */
+#hero {
+  position: relative;
+  width: 100%; height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg); overflow: hidden;
+  /* Background gradient atmosphere */
+}
+#hero::before {
+  content: '';
+  position: absolute; top: 20%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 900px; height: 600px;
+  background: radial-gradient(ellipse, rgba(79,142,247,0.055) 0%, transparent 68%);
+  pointer-events: none;
+}
+
+/* ─────────────────────────────────────────────
+   THREE.JS MACBOOK SCENE (WebGL + CSS3D)
+───────────────────────────────────────────── */
+#webgl-container,
+#css3d-container {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+#webgl-container { z-index: 1; }
+#webgl-container canvas { display: block; width: 100% !important; height: 100% !important; }
+#css3d-container { z-index: 2; }
+#css3d-container > div { pointer-events: none; }
+
+/* Cinematic floor vignette */
+#hero::after {
+  content: '';
+  position: absolute; left: 0; right: 0; bottom: 0; height: 45%;
+  background: radial-gradient(ellipse 70% 100% at 50% 100%, rgba(0,0,0,0.45) 0%, transparent 70%);
+  pointer-events: none; z-index: 1;
+  opacity: 0.9;
+}
+[data-theme="light"] #hero::after {
+  background: radial-gradient(ellipse 70% 100% at 50% 100%, rgba(0,0,0,0.15) 0%, transparent 70%);
+}
+
+/* ── LIVE SCREEN CONTENT (rendered inside CSS3DObject) ──
+   The CSS3DObject scales this DOM down to fit the screen plane.
+   Authored at 1280×800 (CSS px) which maps 1:1 to the screen aspect (16:10). */
+.screen-ui {
+  width: 1280px; height: 800px;
+  background: linear-gradient(180deg, #07070b 0%, #0a0a10 60%, #0d0c16 100%);
+  color: #f0f0f4;
+  font-family: var(--font-body);
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+  /* Subtle scanline + vignette for "screen on" realism */
+  box-shadow: inset 0 0 140px rgba(0,0,0,0.55);
+}
+.screen-ui::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 0%, rgba(79,142,247,0.18) 0%, transparent 60%),
+    radial-gradient(ellipse 80% 40% at 50% 100%, rgba(140,90,220,0.07) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+.screen-ui::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    0deg, rgba(255,255,255,0.012) 0px, rgba(255,255,255,0.012) 1px,
+    transparent 1px, transparent 3px);
+  pointer-events: none;
+  z-index: 5;
+  mix-blend-mode: overlay;
+  opacity: 0.6;
+}
+.screen-ui-inner {
+  position: relative; z-index: 1;
+  width: 100%; height: 100%;
+  padding: 56px 72px;
+  display: flex; flex-direction: column;
+}
+.screen-ui-topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 56px;
+}
+.screen-ui-brand {
+  font-family: var(--font-display);
+  font-size: 30px; font-weight: 800; letter-spacing: -0.02em;
+  display: flex; align-items: center; gap: 14px;
+}
+.screen-ui-brand-mark {
+  width: 38px; height: 38px; border-radius: 10px;
+  background: linear-gradient(135deg, #4f8ef7, #7ab3ff);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 17px; font-weight: 800; color: #07070b;
+}
+.screen-ui-nav {
+  display: flex; gap: 38px;
+  font-size: 18px; color: rgba(240,240,244,0.55); font-weight: 500;
+}
+.screen-ui-nav span:hover { color: #f0f0f4; }
+.screen-ui-pill {
+  padding: 10px 22px; border-radius: 999px;
+  background: #f0f0f4; color: #07070b;
+  font-weight: 600; font-size: 16px; font-family: var(--font-display);
+}
+
+.screen-ui-hero {
+  flex: 1;
+  display: flex; flex-direction: column; justify-content: center;
+  max-width: 920px;
+}
+.screen-ui-eyebrow {
+  font-size: 14px; font-weight: 600; letter-spacing: 0.18em;
+  text-transform: uppercase; color: #7ab3ff;
+  margin-bottom: 26px;
+  display: inline-flex; align-items: center; gap: 14px;
+}
+.screen-ui-eyebrow::before {
+  content: ''; width: 36px; height: 1px; background: #7ab3ff; display: inline-block;
+}
+.screen-ui-title {
+  font-family: var(--font-display);
+  font-size: 86px; font-weight: 800;
+  line-height: 1.02; letter-spacing: -0.035em;
+  margin-bottom: 32px;
+  color: #f4f4f8;
+}
+.screen-ui-title em {
+  font-style: normal;
+  background: linear-gradient(135deg, #7ab3ff 0%, #b58cff 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.screen-ui-subtitle {
+  font-size: 22px; color: rgba(240,240,244,0.6);
+  line-height: 1.5; max-width: 620px;
+  margin-bottom: 44px;
+}
+.screen-ui-cta-row { display: flex; align-items: center; gap: 20px; }
+.screen-ui-cta {
+  padding: 18px 32px; border-radius: 999px;
+  background: #f0f0f4; color: #07070b;
+  font-weight: 700; font-size: 17px; font-family: var(--font-display);
+  display: inline-flex; align-items: center; gap: 12px;
+}
+.screen-ui-cta.ghost { background: transparent; color: #f0f0f4; border: 1px solid rgba(240,240,244,0.18); }
+
+.screen-ui-projects {
+  margin-top: auto;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+}
+.screen-ui-project {
+  height: 116px; border-radius: 14px;
+  padding: 18px 20px;
+  display: flex; flex-direction: column; justify-content: space-between;
+  border: 1px solid rgba(255,255,255,0.06);
+  position: relative; overflow: hidden;
+}
+.screen-ui-project::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at 80% -20%, rgba(255,255,255,0.08), transparent 60%);
+}
+.screen-ui-project:nth-child(1) { background: linear-gradient(135deg, #1a0a14, #3d1a2a); }
+.screen-ui-project:nth-child(2) { background: linear-gradient(135deg, #100c06, #2e2410); }
+.screen-ui-project:nth-child(3) { background: linear-gradient(135deg, #020e1f, #0a2748); }
+.screen-ui-project:nth-child(4) { background: linear-gradient(135deg, #0c0e12, #20243a); }
+.screen-ui-project-tag {
+  font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(240,240,244,0.45); font-weight: 600;
+}
+.screen-ui-project-name {
+  font-family: var(--font-display);
+  font-size: 22px; font-weight: 700; letter-spacing: -0.015em;
+  color: #f0f0f4;
+}
+.screen-ui-project-arrow {
+  position: absolute; top: 18px; right: 20px;
+  font-size: 18px; color: rgba(240,240,244,0.5);
+}
+
+/* Reflection of screen on keyboard surface — handled in WebGL,
+   but a subtle CSS glow at the seam for extra realism */
+#hero .screen-spill {
+  position: absolute; left: 50%; bottom: 18%; transform: translateX(-50%);
+  width: 60vw; max-width: 700px; height: 90px;
+  background: radial-gradient(ellipse, rgba(79,142,247,0.16) 0%, transparent 70%);
+  filter: blur(28px);
+  pointer-events: none; z-index: 1;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+
+/* ─────────────────────────────────────────────
+   HERO SCROLL INDICATOR
+───────────────────────────────────────────── */
+.scroll-indicator {
+  position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  z-index: 4;
+}
+.scroll-indicator span {
+  font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-3);
+}
+.scroll-line {
+  width: 1px; height: 40px;
+  background: linear-gradient(to bottom, var(--text-3), transparent);
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+@keyframes scrollPulse {
+  0%, 100% { opacity: 0.3; transform: scaleY(0.6); transform-origin: top; }
+  50%       { opacity: 1;   transform: scaleY(1); }
+}
+
+/* ─────────────────────────────────────────────
+   SECTION SHARED
+───────────────────────────────────────────── */
+section { position: relative; }
+.section-label {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 16px; display: block;
+}
+.section-title {
+  font-family: var(--font-display); font-size: clamp(36px, 4vw, 56px);
+  font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; color: var(--text-1);
+}
+.section-sub {
+  font-size: 17px; color: var(--text-2); line-height: 1.65; max-width: 480px;
+}
+
+/* ─────────────────────────────────────────────
+   WORKS SECTION
+───────────────────────────────────────────── */
+#works {
+  padding: 140px 48px;
+  background: var(--bg);
+}
+.works-header {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  margin-bottom: 72px; gap: 24px;
+}
+.works-header-left { max-width: 520px; }
+.works-count { font-size: 13px; color: var(--text-3); letter-spacing: 0.05em; white-space: nowrap; align-self: flex-end; padding-bottom: 4px; }
+.works-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+
+/* PROJECT CARDS */
+.work-card {
+  position: relative; border-radius: 20px; overflow: hidden;
+  background: var(--surface); border: 1px solid var(--border);
+  height: 520px; cursor: none;
+  transition: border-color 0.4s, box-shadow 0.4s;
+  transform-style: preserve-3d; will-change: transform;
+}
+.work-card:hover { border-color: var(--border2); box-shadow: var(--card-shadow); }
+.card-visual { position: absolute; inset: 0; overflow: hidden; }
+.card-content {
+  position: absolute; bottom: 0; left: 0; right: 0; padding: 32px; z-index: 2;
+  background: linear-gradient(to top, var(--surface) 0%, var(--surface) 45%, transparent 100%);
+}
+.card-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.tag {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 100px; border: 1px solid var(--border2);
+  color: var(--text-2); background: var(--surface2); transition: border-color 0.3s, color 0.3s;
+}
+.work-card:hover .tag { border-color: var(--accent); color: var(--accent); }
+.card-year { font-size: 12px; color: var(--text-3); letter-spacing: 0.06em; margin-bottom: 6px; }
+.card-title {
+  font-family: var(--font-display); font-size: 24px; font-weight: 700;
+  letter-spacing: -0.02em; color: var(--text-1); margin-bottom: 8px; line-height: 1.2;
+}
+.card-desc { font-size: 14px; color: var(--text-2); line-height: 1.55; margin-bottom: 24px; }
+.card-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 600; font-family: var(--font-display);
+  color: var(--text-1); transition: gap 0.3s var(--ease-out), color 0.3s;
+}
+.card-cta:hover { gap: 14px; color: var(--accent); }
+.card-cta-arrow {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 1px solid var(--border2); display: flex; align-items: center; justify-content: center;
+  transition: background 0.3s, border-color 0.3s;
+}
+.card-cta:hover .card-cta-arrow { background: var(--accent); border-color: var(--accent); }
+.card-cta-arrow svg { width: 12px; height: 12px; }
+.card-cta:hover .card-cta-arrow svg { stroke: #fff; }
+
+/* Card visuals */
+.card-vv .card-visual { background: linear-gradient(135deg, #120810 0%, #241220 40%, #3d1a2a 100%); }
+.card-beex .card-visual { background: linear-gradient(135deg, #0d0b06 0%, #1a1508 40%, #261e0a 100%); }
+.card-nexgen .card-visual { background: linear-gradient(135deg, #020b18 0%, #051428 40%, #082040 100%); }
+.card-car .card-visual { background: linear-gradient(135deg, #0c0d0f 0%, #161820 40%, #1e2030 100%); }
+
+.card-visual-art { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+.card-vv .card-visual-art svg { width: 340px; height: 260px; opacity: 0.55; }
+.card-beex .card-visual-art svg { width: 300px; height: 260px; opacity: 0.6; }
+.card-nexgen .card-visual-art svg { width: 340px; height: 280px; opacity: 0.5; }
+.card-car .card-visual-art svg { width: 320px; height: 260px; opacity: 0.55; }
+
+.card-coming-soon {
+  position: absolute; inset: 0; z-index: 10;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.4s;
+}
+.work-card:not(.card-vv):hover .card-coming-soon { opacity: 1; }
+.coming-soon-badge {
+  padding: 10px 20px; border: 1px solid var(--accent); border-radius: 100px;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--accent); background: rgba(9,9,11,0.85); backdrop-filter: blur(12px);
+}
+
+/* ─────────────────────────────────────────────
+   ABOUT SECTION
+───────────────────────────────────────────── */
+#about {
+  padding: 140px 48px;
+  background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+}
+.about-inner {
+  display: grid; grid-template-columns: 380px 1fr; gap: 80px;
+  align-items: center; max-width: 1200px; margin: 0 auto;
+}
+.about-photo-wrap { position: relative; }
+.about-photo {
+  width: 100%; aspect-ratio: 4/5; border-radius: 24px;
+  background: var(--surface); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;
+}
+.about-photo::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 30% 30%, var(--accent-glow) 0%, transparent 60%);
+}
+.about-photo-placeholder {
+  width: 100px; height: 100px; border-radius: 50%; border: 2px dashed var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 24px; font-weight: 800; color: var(--text-3);
+}
+.about-photo img { width: 100%; height: 100%; object-fit: cover; border-radius: 24px; display: none; }
+.about-photo img.loaded { display: block; }
+.about-float-badge {
+  position: absolute; bottom: -16px; right: -16px;
+  background: var(--surface2); border: 1px solid var(--border2); border-radius: 14px;
+  padding: 12px 16px; display: flex; align-items: center; gap: 10px; backdrop-filter: blur(12px);
+}
+.about-float-badge .pulse {
+  width: 8px; height: 8px; border-radius: 50%; background: #22c55e;
+  animation: pulseGreen 2s infinite; flex-shrink: 0;
+}
+@keyframes pulseGreen {
+  0%   { box-shadow: 0 0 0 0 rgba(34,197,94,0.4); }
+  70%  { box-shadow: 0 0 0 8px rgba(34,197,94,0); }
+  100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
+}
+.about-float-badge span { font-size: 12px; font-weight: 600; color: var(--text-2); white-space: nowrap; }
+.about-content { max-width: 580px; }
+.about-greeting {
+  font-family: var(--font-display); font-size: clamp(40px, 4.5vw, 64px);
+  font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; color: var(--text-1); margin-bottom: 28px;
+}
+.about-greeting em { font-style: normal; color: var(--accent); }
+.about-bio { font-size: 17px; line-height: 1.7; color: var(--text-2); margin-bottom: 20px; }
+.about-skills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 32px; }
+.skill-tag {
+  padding: 6px 14px; border-radius: 100px; font-size: 12px; font-weight: 600; letter-spacing: 0.04em;
+  background: var(--surface2); border: 1px solid var(--border2); color: var(--text-2);
+  transition: border-color 0.3s, color 0.3s, background 0.3s;
+}
+.skill-tag:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-glow2); }
+.about-philosophy {
+  margin-top: 36px; padding-left: 20px; border-left: 2px solid var(--accent);
+}
+.about-philosophy p {
+  font-family: var(--font-display); font-size: 18px; font-style: italic;
+  color: var(--text-2); line-height: 1.6; font-weight: 500;
+}
+
+/* ─────────────────────────────────────────────
+   CONTACT SECTION
+───────────────────────────────────────────── */
+#contact {
+  padding: 160px 48px; background: var(--bg); text-align: center; position: relative; overflow: hidden;
+}
+#contact::before {
+  content: ''; position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
+  width: 800px; height: 600px;
+  background: radial-gradient(ellipse, var(--accent-glow) 0%, transparent 70%); pointer-events: none;
+}
+.contact-inner { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; }
+.contact-headline {
+  font-family: var(--font-display); font-size: clamp(40px, 5vw, 72px);
+  font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; color: var(--text-1); margin-bottom: 20px;
+}
+.contact-sub { font-size: 17px; color: var(--text-2); margin-bottom: 56px; }
+.contact-email-link {
+  display: inline-block; font-family: var(--font-display);
+  font-size: clamp(20px, 2.5vw, 32px); font-weight: 700; color: var(--text-1);
+  letter-spacing: -0.02em; margin-bottom: 48px; position: relative; transition: color 0.3s;
+}
+.contact-email-link::after {
+  content: ''; position: absolute; bottom: -2px; left: 0; right: 0; height: 1px;
+  background: var(--accent); transform: scaleX(0); transform-origin: left;
+  transition: transform 0.5s var(--ease-out);
+}
+.contact-email-link:hover { color: var(--accent); }
+.contact-email-link:hover::after { transform: scaleX(1); }
+.contact-form {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 24px;
+  padding: 40px; margin-top: 40px; text-align: left;
+}
+.form-row { margin-bottom: 20px; }
+.form-row.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-group { position: relative; }
+.form-group label {
+  position: absolute; top: 16px; left: 16px; font-size: 14px; color: var(--text-3);
+  pointer-events: none; transition: all 0.25s var(--ease-out); z-index: 1;
+}
+.form-group input, .form-group textarea {
+  width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px;
+  padding: 24px 16px 10px; font-family: var(--font-body); font-size: 15px; color: var(--text-1);
+  outline: none; transition: border-color 0.3s, box-shadow 0.3s; cursor: none;
+}
+.form-group textarea { min-height: 120px; resize: vertical; }
+.form-group input:focus, .form-group textarea:focus {
+  border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow);
+}
+.form-group input:focus + label, .form-group input:not(:placeholder-shown) + label,
+.form-group textarea:focus + label, .form-group textarea:not(:placeholder-shown) + label {
+  top: 8px; font-size: 11px; font-weight: 600; color: var(--accent);
+  letter-spacing: 0.04em; text-transform: uppercase;
+}
+.form-group input::placeholder, .form-group textarea::placeholder { color: transparent; }
+.form-submit {
+  width: 100%; margin-top: 8px; padding: 16px 32px; border-radius: 100px;
+  font-family: var(--font-display); font-size: 15px; font-weight: 700;
+  background: var(--text-1); color: var(--bg); letter-spacing: 0.01em;
+  transition: opacity 0.3s, transform 0.3s, box-shadow 0.3s;
+}
+.form-submit:hover { opacity: 0.88; transform: translateY(-2px); box-shadow: 0 16px 40px var(--accent-glow); }
+.socials { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 48px; }
+.social-link {
+  display: flex; align-items: center; gap: 8px; padding: 10px 18px;
+  border-radius: 100px; border: 1px solid var(--border);
+  font-size: 13px; font-weight: 600; color: var(--text-2); background: var(--surface);
+  transition: color 0.3s, border-color 0.3s, background 0.3s, transform 0.3s;
+}
+.social-link:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-glow2); transform: translateY(-2px); }
+.social-link svg { width: 15px; height: 15px; }
+.contact-final {
+  margin-top: 80px; font-family: var(--font-display);
+  font-size: clamp(28px, 3vw, 42px); font-weight: 800;
+  letter-spacing: -0.025em; color: var(--text-1); line-height: 1.15;
+}
+footer {
+  padding: 32px 48px; border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 13px; color: var(--text-3);
+}
+
+/* ─────────────────────────────────────────────
+   CASE STUDY MODAL
+───────────────────────────────────────────── */
+#case-study-modal {
+  position: fixed; inset: 0; z-index: 800;
+  background: var(--bg); transform: translateY(100%);
+  transition: transform 0.75s var(--ease-out);
+  overflow-y: auto; overflow-x: hidden;
+}
+#case-study-modal.open { transform: translateY(0); }
+.modal-close {
+  position: fixed; top: 24px; right: 32px; z-index: 850;
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--surface2); border: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-2); transition: background 0.3s, color 0.3s, transform 0.3s;
+}
+.modal-close:hover { background: var(--surface); color: var(--text-1); transform: rotate(90deg); }
+.modal-close svg { width: 18px; height: 18px; }
+.cs-chapter { padding: 120px 80px; max-width: 1100px; margin: 0 auto; }
+.cs-chapter + .cs-chapter { border-top: 1px solid var(--border); }
+.cs-hero-chapter {
+  min-height: 80vh; display: flex; align-items: center; justify-content: center;
+  flex-direction: column; text-align: center; padding: 120px 48px;
+  background: linear-gradient(135deg, #120810 0%, #241220 40%, #3d1a2a 70%, #1a0a12 100%);
+  position: relative; overflow: hidden;
+}
+.cs-hero-chapter::before {
+  content: ''; position: absolute; top: -100px; left: 50%; transform: translateX(-50%);
+  width: 600px; height: 600px;
+  background: radial-gradient(ellipse, rgba(180,80,120,0.15) 0%, transparent 70%);
+}
+.cs-project-name {
+  font-family: var(--font-display); font-size: clamp(48px, 7vw, 96px);
+  font-weight: 800; letter-spacing: -0.04em; line-height: 1; color: #f5edf0; margin-bottom: 20px;
+}
+.cs-project-sub { font-size: 16px; color: rgba(245,237,240,0.5); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 40px; }
+.cs-meta-row { display: flex; gap: 32px; justify-content: center; flex-wrap: wrap; }
+.cs-meta { text-align: center; }
+.cs-meta-label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(245,237,240,0.4); margin-bottom: 4px; }
+.cs-meta-value { font-family: var(--font-display); font-size: 15px; font-weight: 600; color: rgba(245,237,240,0.85); }
+.cs-col-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+.cs-h2 { font-family: var(--font-display); font-size: clamp(28px, 3vw, 42px); font-weight: 800; letter-spacing: -0.025em; color: var(--text-1); margin-bottom: 20px; line-height: 1.15; }
+.cs-p { font-size: 16px; line-height: 1.75; color: var(--text-2); margin-bottom: 16px; }
+.cs-callout { padding: 24px 28px; background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 0 12px 12px 0; margin: 24px 0; }
+.cs-callout p { font-family: var(--font-display); font-size: 17px; font-weight: 600; color: var(--text-1); line-height: 1.5; }
+.cs-insight-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 32px; }
+.cs-insight { padding: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; transition: border-color 0.3s; }
+.cs-insight:hover { border-color: var(--accent); }
+.cs-insight-num { font-family: var(--font-display); font-size: 32px; font-weight: 800; color: var(--accent); letter-spacing: -0.03em; margin-bottom: 8px; }
+.cs-insight-text { font-size: 14px; color: var(--text-2); line-height: 1.55; }
+.cs-friction-flow { display: flex; gap: 12px; margin: 32px 0; flex-wrap: wrap; }
+.cs-friction-step { flex: 1; min-width: 140px; padding: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; text-align: center; position: relative; }
+.cs-friction-step::after { content: '→'; position: absolute; right: -18px; top: 50%; transform: translateY(-50%); color: var(--text-3); font-size: 14px; }
+.cs-friction-step:last-child::after { display: none; }
+.cs-friction-step.tension { border-color: #c49a6c; background: rgba(196,154,108,0.06); }
+.cs-friction-label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); margin-bottom: 6px; }
+.cs-friction-name { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--text-1); }
+.cs-color-swatch { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+.swatch { width: 48px; height: 48px; border-radius: 10px; border: 1px solid var(--border); position: relative; }
+.swatch::after { content: attr(data-name); position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%); font-size: 10px; color: var(--text-3); white-space: nowrap; }
+.cs-outcome-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 32px; }
+.cs-outcome-item { padding: 28px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; }
+.cs-outcome-label { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+.cs-outcome-text { font-family: var(--font-display); font-size: 16px; font-weight: 600; color: var(--text-1); line-height: 1.4; }
+
+/* ─────────────────────────────────────────────
+   SCROLL TO TOP
+───────────────────────────────────────────── */
+#scroll-top {
+  position: fixed; bottom: 32px; right: 32px; width: 44px; height: 44px; border-radius: 50%;
+  background: var(--surface2); border: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: center; color: var(--text-2); z-index: 400;
+  opacity: 0; transform: translateY(16px); cursor: none;
+  transition: opacity 0.4s, transform 0.4s, background 0.3s, color 0.3s;
+}
+#scroll-top.visible { opacity: 1; transform: translateY(0); }
+#scroll-top:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+#scroll-top svg { width: 16px; height: 16px; }
+
+/* ─────────────────────────────────────────────
+   UTILITY
+───────────────────────────────────────────── */
+.magnetic-btn { display: inline-block; }
+
+/* ─────────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  nav { padding: 0 24px; }
+  .nav-links, .nav-cta { display: none; }
+  #works { padding: 80px 24px; }
+  .works-header { flex-direction: column; align-items: flex-start; }
+  .works-grid { grid-template-columns: 1fr; gap: 16px; }
+  .work-card { height: 440px; }
+  #about { padding: 80px 24px; }
+  .about-inner { grid-template-columns: 1fr; }
+  .about-photo-wrap { max-width: 320px; }
+  #contact { padding: 80px 24px; }
+  .contact-form { padding: 28px 20px; }
+  .form-row.two-col { grid-template-columns: 1fr; }
+  .cs-chapter { padding: 80px 24px; }
+  .cs-col-2 { grid-template-columns: 1fr; gap: 32px; }
+  .cs-insight-grid { grid-template-columns: 1fr 1fr; }
+  .cs-outcome-grid { grid-template-columns: 1fr; }
+  footer { padding: 24px; flex-direction: column; gap: 8px; text-align: center; }
+  .mac-group { transform: scale(0.55); }
+  .mac-scene { perspective: 700px; }
+}
+@media (max-width: 480px) {
+  .mac-group { transform: scale(0.38); }
+}
+</style>
+</head>
+<body>
+
+<div id="scroll-progress"></div>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<button id="scroll-top" aria-label="Back to top">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+
+<!-- ═══ NAV ═══════════════════════════════════════ -->
+<nav id="main-nav">
+  <a href="#" class="nav-logo">
+    <div class="monogram">IK</div>
+    <span>Inna Krachun</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#works">Works</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="theme-toggle magnetic-btn" id="theme-toggle" aria-label="Toggle theme">
+      <svg id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
+    <a href="#contact" class="nav-cta magnetic-btn">Let's talk</a>
+  </div>
+</nav>
+
+<!-- ═══ HERO — Three.js MacBook ═══════════════════════════ -->
+<section id="hero">
+  <!-- WebGL renderer mounts here (laptop body, lighting, shadows, reflections) -->
+  <div id="webgl-container"></div>
+
+  <!-- CSS3D renderer mounts here. Each CSS3DObject becomes a child div.
+       The live portfolio screen content is added by JS into a CSS3DObject. -->
+  <div id="css3d-container"></div>
+
+  <!-- Subtle ambient screen-spill on keyboard (CSS glow) -->
+  <div class="screen-spill" id="screen-spill"></div>
+
+  <!-- ── Hidden template: cloned into CSS3DObject when scene mounts ── -->
+  <template id="screen-template">
+    <div class="screen-ui">
+      <div class="screen-ui-inner">
+        <div class="screen-ui-topbar">
+          <div class="screen-ui-brand">
+            <span class="screen-ui-brand-mark">IK</span>
+            Inna Krachun
+          </div>
+          <div class="screen-ui-nav">
+            <span>Works</span><span>About</span><span>Contact</span>
+          </div>
+          <div class="screen-ui-pill">Let's talk</div>
+        </div>
+
+        <div class="screen-ui-hero">
+          <div class="screen-ui-eyebrow">UX · Branding · Creative Dev</div>
+          <h1 class="screen-ui-title">Designing digital experiences<br>people <em>remember</em>.</h1>
+          <p class="screen-ui-subtitle">Multidisciplinary designer at UAL — crafting cinematic interfaces, refined brand systems and emotional digital products.</p>
+          <div class="screen-ui-cta-row">
+            <span class="screen-ui-cta">View works <span>→</span></span>
+            <span class="screen-ui-cta ghost">About me</span>
+          </div>
+        </div>
+
+        <div class="screen-ui-projects">
+          <div class="screen-ui-project">
+            <span class="screen-ui-project-tag">UX · Branding</span>
+            <span class="screen-ui-project-name">V&amp;V Boutique</span>
+            <span class="screen-ui-project-arrow">↗</span>
+          </div>
+          <div class="screen-ui-project">
+            <span class="screen-ui-project-tag">Identity</span>
+            <span class="screen-ui-project-name">Beextrart</span>
+            <span class="screen-ui-project-arrow">↗</span>
+          </div>
+          <div class="screen-ui-project">
+            <span class="screen-ui-project-tag">Web · UI</span>
+            <span class="screen-ui-project-name">NexGen</span>
+            <span class="screen-ui-project-arrow">↗</span>
+          </div>
+          <div class="screen-ui-project">
+            <span class="screen-ui-project-tag">UI Design</span>
+            <span class="screen-ui-project-name">Car Service</span>
+            <span class="screen-ui-project-arrow">↗</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <!-- Scroll indicator -->
+  <div class="scroll-indicator" id="scroll-indicator">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ═══ WORKS ═════════════════════════════════════ -->
+<section id="works">
+  <div class="works-header">
+    <div class="works-header-left">
+      <span class="section-label">Selected Work</span>
+      <h2 class="section-title">Projects that<br>tell a story.</h2>
+    </div>
+    <span class="works-count">04 projects</span>
+  </div>
+  <div class="works-grid">
+
+    <div class="work-card card-vv magnetic-btn" id="card-vv" role="button" tabindex="0">
+      <div class="card-visual"><div class="card-visual-art">
+        <svg viewBox="0 0 340 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="170" cy="130" rx="120" ry="90" stroke="#c49a6c" stroke-width="0.5" opacity="0.4"/>
+          <ellipse cx="170" cy="130" rx="90" ry="65" stroke="#c49a6c" stroke-width="0.5" opacity="0.5"/>
+          <ellipse cx="170" cy="130" rx="60" ry="42" stroke="#c49a6c" stroke-width="0.5" opacity="0.6"/>
+          <rect x="110" y="70" width="120" height="160" rx="4" stroke="#b87a9a" stroke-width="0.6" opacity="0.35" transform="rotate(-8 170 150)"/>
+          <rect x="120" y="75" width="100" height="150" rx="3" stroke="#d4a0b5" stroke-width="0.5" opacity="0.25" transform="rotate(5 170 150)"/>
+          <line x1="50" y1="130" x2="290" y2="130" stroke="#c49a6c" stroke-width="0.4" opacity="0.2"/>
+          <line x1="170" y1="30" x2="170" y2="230" stroke="#c49a6c" stroke-width="0.4" opacity="0.2"/>
+          <circle cx="170" cy="130" r="8" fill="#c49a6c" opacity="0.25"/>
+          <text x="170" y="134" font-family="serif" font-size="10" fill="#c49a6c" opacity="0.6" text-anchor="middle">V&amp;V</text>
+        </svg>
+      </div></div>
+      <div class="card-content">
+        <div class="card-tags"><span class="tag">UX Design</span><span class="tag">Branding</span><span class="tag">Research</span></div>
+        <p class="card-year">2025</p>
+        <h3 class="card-title">V&amp;V Boutique</h3>
+        <p class="card-desc">Bridging editorial warmth with transactional clarity for a London-based premium fashion boutique.</p>
+        <span class="card-cta">View case study <span class="card-cta-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></span>
+      </div>
+    </div>
+
+    <div class="work-card card-beex magnetic-btn" role="button" tabindex="0">
+      <div class="card-coming-soon"><span class="coming-soon-badge">Coming Soon</span></div>
+      <div class="card-visual"><div class="card-visual-art">
+        <svg viewBox="0 0 300 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M150 50 Q180 100 150 150 Q120 200 150 240" stroke="#d4af37" stroke-width="1.2" opacity="0.5" fill="none"/>
+          <path d="M130 55 Q165 100 140 155 Q115 205 145 240" stroke="#d4af37" stroke-width="0.6" opacity="0.3" fill="none"/>
+          <path d="M170 55 Q200 105 165 155 Q135 205 160 240" stroke="#d4af37" stroke-width="0.6" opacity="0.3" fill="none"/>
+          <circle cx="150" cy="145" r="30" stroke="#d4af37" stroke-width="0.6" opacity="0.35"/>
+          <circle cx="150" cy="145" r="18" stroke="#d4af37" stroke-width="0.6" opacity="0.45"/>
+          <circle cx="150" cy="145" r="5" fill="#d4af37" opacity="0.3"/>
+        </svg>
+      </div></div>
+      <div class="card-content">
+        <div class="card-tags"><span class="tag">Branding</span><span class="tag">Logo Design</span><span class="tag">Identity</span></div>
+        <p class="card-year">2025</p>
+        <h3 class="card-title">Beextrart</h3>
+        <p class="card-desc">A refined visual identity for a premium eyelash artistry brand — where beauty meets bold simplicity.</p>
+        <span class="card-cta">View project <span class="card-cta-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></span>
+      </div>
+    </div>
+
+    <div class="work-card card-nexgen magnetic-btn" role="button" tabindex="0">
+      <div class="card-coming-soon"><span class="coming-soon-badge">Coming Soon</span></div>
+      <div class="card-visual"><div class="card-visual-art">
+        <svg viewBox="0 0 340 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs><pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M 30 0 L 0 0 0 30" fill="none" stroke="#4f8ef7" stroke-width="0.3" opacity="0.3"/></pattern></defs>
+          <rect width="340" height="280" fill="url(#grid)"/>
+          <rect x="90" y="60" width="160" height="100" rx="8" stroke="#4f8ef7" stroke-width="0.8" opacity="0.5" fill="rgba(79,142,247,0.04)"/>
+          <rect x="100" y="72" width="60" height="8" rx="2" fill="#4f8ef7" opacity="0.25"/>
+          <rect x="100" y="86" width="100" height="5" rx="2" fill="#4f8ef7" opacity="0.15"/>
+          <circle cx="170" cy="200" r="28" stroke="#4f8ef7" stroke-width="0.7" opacity="0.35"/>
+          <circle cx="170" cy="200" r="14" stroke="#4f8ef7" stroke-width="0.7" opacity="0.45"/>
+        </svg>
+      </div></div>
+      <div class="card-content">
+        <div class="card-tags"><span class="tag">Web Design</span><span class="tag">Development</span><span class="tag">UI/UX</span></div>
+        <p class="card-year">2025</p>
+        <h3 class="card-title">NexGen</h3>
+        <p class="card-desc">A forward-thinking digital presence for a next-generation tech company.</p>
+        <span class="card-cta">View project <span class="card-cta-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></span>
+      </div>
+    </div>
+
+    <div class="work-card card-car magnetic-btn" role="button" tabindex="0">
+      <div class="card-coming-soon"><span class="coming-soon-badge">Coming Soon</span></div>
+      <div class="card-visual"><div class="card-visual-art">
+        <svg viewBox="0 0 320 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M60 150 L90 110 L130 95 L190 95 L230 110 L260 150 L260 175 L60 175 Z" stroke="#f07032" stroke-width="1" opacity="0.45" fill="rgba(240,112,50,0.04)"/>
+          <path d="M95 110 L100 80 L220 80 L225 110" stroke="#f07032" stroke-width="0.7" opacity="0.3" fill="none"/>
+          <circle cx="95" cy="165" r="7" stroke="#f07032" stroke-width="0.7" opacity="0.5"/>
+          <circle cx="225" cy="165" r="7" stroke="#f07032" stroke-width="0.7" opacity="0.5"/>
+          <line x1="40" y1="150" x2="280" y2="150" stroke="#f07032" stroke-width="0.5" opacity="0.2"/>
+        </svg>
+      </div></div>
+      <div class="card-content">
+        <div class="card-tags"><span class="tag">Web Design</span><span class="tag">UI Design</span></div>
+        <p class="card-year">2024</p>
+        <h3 class="card-title">Car Service</h3>
+        <p class="card-desc">Clean, trustworthy interface design for a modern automotive service business.</p>
+        <span class="card-cta">View project <span class="card-cta-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ABOUT ════════════════════════════════════════ -->
+<section id="about">
+  <div class="about-inner">
+    <div class="about-photo-wrap">
+      <div class="about-photo">
+        <!-- To add your photo: <img src="photo.jpg" alt="Inna Krachun" onload="this.classList.add('loaded')"> -->
+        <div class="about-photo-placeholder">IK</div>
+      </div>
+      <div class="about-float-badge">
+        <div class="pulse"></div>
+        <span>Open to opportunities</span>
+      </div>
+    </div>
+    <div class="about-content">
+      <span class="section-label">About me</span>
+      <h2 class="about-greeting">Hello, I'm <em>Inna</em>.</h2>
+      <p class="about-bio">I'm a multidisciplinary UX/UI designer studying at UAL, where I'm learning to merge aesthetic precision with emotional intelligence. I believe design is the space where logic meets empathy — and that every pixel has the potential to change how someone feels.</p>
+      <p class="about-bio">From brand identities to digital products, I approach every project with curiosity, rigour, and a deep care for the people who will ultimately use what I create.</p>
+      <div class="about-philosophy">
+        <p>"Good design doesn't just look right — it feels right. It communicates without words, builds trust without asking, and invites without forcing."</p>
+      </div>
+      <div class="about-skills">
+        <span class="skill-tag">UX Design</span><span class="skill-tag">UI Design</span><span class="skill-tag">Branding</span>
+        <span class="skill-tag">Creative Coding</span><span class="skill-tag">Web Development</span>
+        <span class="skill-tag">Social Media Design</span><span class="skill-tag">Graphic Design</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CONTACT ══════════════════════════════════════ -->
+<section id="contact">
+  <div class="contact-inner">
+    <span class="section-label">Get in touch</span>
+    <h2 class="contact-headline">Let's build something<br>people remember.</h2>
+    <p class="contact-sub">Available for freelance, internships &amp; collaborations.</p>
+    <a href="mailto:inka3553@gmail.com" class="contact-email-link magnetic-btn">inka3553@gmail.com</a>
+    <div class="socials">
+      <a href="#" class="social-link magnetic-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>Instagram
+      </a>
+      <a href="#" class="social-link magnetic-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn
+      </a>
+      <a href="#" class="social-link magnetic-btn">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 7h-7V5h7v2zm1.726 10c-.442 1.297-2.029 3-5.101 3-3.074 0-5.564-1.729-5.564-5.675 0-3.91 2.325-5.92 5.466-5.92 3.082 0 4.964 1.782 5.375 4.426.078.506.109 1.188.095 2.14H15.97c.13 3.211 3.483 3.312 4.588 2.029H23.7zM15.998 13c-.131-1.96-.971-2.363-2.179-2.363-1.225 0-2.079.491-2.083 2.363h4.262zm-12.716 0H7.1a1.5 1.5 0 0 0 0-3H3.282V13zm0-5h3.5a1.5 1.5 0 1 0 0-3h-3.5v3zM0 20V4h7.5a4 4 0 0 1 2.976 6.668A4 4 0 0 1 7.5 18H0v2z"/></svg>Behance
+      </a>
+    </div>
+    <form class="contact-form" id="contact-form" onsubmit="handleFormSubmit(event)">
+      <div class="form-row two-col">
+        <div class="form-group">
+          <input type="text" id="f-name" name="name" placeholder="Name" required>
+          <label for="f-name">Name</label>
+        </div>
+        <div class="form-group">
+          <input type="email" id="f-email" name="email" placeholder="Email" required>
+          <label for="f-email">Email</label>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <textarea id="f-msg" name="message" placeholder="Message" required></textarea>
+          <label for="f-msg">Message</label>
+        </div>
+      </div>
+      <button type="submit" class="form-submit magnetic-btn">Send message →</button>
+    </form>
+    <p class="contact-final">"The best products are the ones that make people feel something."</p>
+  </div>
+</section>
+
+<footer>
+  <span>© 2025 Inna Krachun</span>
+  <span>Designed &amp; developed with intention.</span>
+</footer>
+
+<!-- ═══ CASE STUDY MODAL ════════════════════════════ -->
+<div id="case-study-modal" role="dialog" aria-modal="true">
+  <button class="modal-close magnetic-btn" id="modal-close">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <div class="cs-hero-chapter">
+    <p class="cs-project-sub">Case Study · 2025</p>
+    <h1 class="cs-project-name">V&amp;V Boutique</h1>
+    <div class="cs-meta-row">
+      <div class="cs-meta"><div class="cs-meta-label">Role</div><div class="cs-meta-value">UX Research · UX Design</div></div>
+      <div class="cs-meta"><div class="cs-meta-label">Timeline</div><div class="cs-meta-value">8 weeks</div></div>
+      <div class="cs-meta"><div class="cs-meta-label">Scope</div><div class="cs-meta-value">E-commerce Redesign</div></div>
+      <div class="cs-meta"><div class="cs-meta-label">Tools</div><div class="cs-meta-value">Figma · FigJam</div></div>
+    </div>
+  </div>
+  <div class="cs-chapter"><div class="cs-col-2"><div><span class="section-label">01 — Overview</span><h2 class="cs-h2">A premium fashion boutique with a split identity.</h2></div><div><p class="cs-p">V&amp;V Boutique is a Ukrainian-founded, London-based premium fashion brand. Their website tells a beautiful brand story — but the shopping experience felt like a different website entirely.</p><div class="cs-callout"><p>"The whole journey is itself the design problem — not just any single page."</p></div></div></div></div>
+  <div class="cs-chapter"><span class="section-label">02 — Problem</span><h2 class="cs-h2">Discovery vs. decision fatigue.</h2><div class="cs-friction-flow"><div class="cs-friction-step"><div class="cs-friction-label">Entry</div><div class="cs-friction-name">Hero — brand story</div></div><div class="cs-friction-step"><div class="cs-friction-label">Browse</div><div class="cs-friction-name">Shop grid</div></div><div class="cs-friction-step tension"><div class="cs-friction-label">⚠ Tension</div><div class="cs-friction-name">Product page — gaps</div></div><div class="cs-friction-step"><div class="cs-friction-label">Escape</div><div class="cs-friction-name">Lookbook</div></div><div class="cs-friction-step tension"><div class="cs-friction-label">⚠ Late signal</div><div class="cs-friction-name">Checkout info</div></div></div><p class="cs-p">Users reached the product page with intent to purchase — then hesitated. Three questions went unanswered: <em>Will it fit? What does it look like styled? What are the returns?</em></p></div>
+  <div class="cs-chapter"><span class="section-label">03 — Research</span><h2 class="cs-h2">Three friction points. One root cause.</h2><div class="cs-insight-grid"><div class="cs-insight"><div class="cs-insight-num">01</div><div class="cs-insight-text">Product pages lacked size guides and styling context at the point of decision</div></div><div class="cs-insight"><div class="cs-insight-num">02</div><div class="cs-insight-text">Trust content (size chart, FAQ, returns) was siloed from discovery moments</div></div><div class="cs-insight"><div class="cs-insight-num">03</div><div class="cs-insight-text">Delivery and returns info appeared at checkout — too late to reduce hesitation</div></div></div></div>
+  <div class="cs-chapter"><div class="cs-col-2"><div><span class="section-label">04 — Strategy</span><h2 class="cs-h2">Bridge the gap. Don't redesign from scratch.</h2><p class="cs-p">The goal was not to rebuild the site. The strategy was to integrate trust signals into the product experience, bringing the warmth of the brand narrative into the moment of decision.</p></div><div><p class="cs-p"><strong style="color:var(--accent)">1. Contextual sizing</strong> — Embed size guide directly on product pages</p><br><p class="cs-p"><strong style="color:var(--accent)">2. Lookbook integration</strong> — Pull editorial styling into product pages</p><br><p class="cs-p"><strong style="color:var(--accent)">3. Early trust signals</strong> — Surface delivery and returns on product pages</p></div></div></div>
+  <div class="cs-chapter"><span class="section-label">05 — Visual System</span><h2 class="cs-h2">Preserving the brand's emotional language.</h2><div class="cs-col-2" style="margin-top:36px"><div><p class="cs-p" style="font-weight:600;color:var(--text-1);margin-bottom:12px">Colour palette</p><div class="cs-color-swatch"><div class="swatch" style="background:#1a0f0a" data-name="Ink"></div><div class="swatch" style="background:#f5f0eb" data-name="Cream"></div><div class="swatch" style="background:#c49a6c" data-name="Gold"></div><div class="swatch" style="background:#8b3a52" data-name="Rose"></div><div class="swatch" style="background:#d4c5b5" data-name="Sand"></div></div></div><div style="margin-top:32px"><p class="cs-p" style="font-family:serif;font-size:20px;color:var(--text-1)">Playfair Display — Editorial voice</p><p class="cs-p">Inter — Functional clarity</p></div></div></div>
+  <div class="cs-chapter"><span class="section-label">06 — Outcome</span><h2 class="cs-h2">What changes when friction becomes confidence.</h2><div class="cs-outcome-grid"><div class="cs-outcome-item"><div class="cs-outcome-label">User clarity</div><div class="cs-outcome-text">Users can answer their core questions without leaving the product page</div></div><div class="cs-outcome-item"><div class="cs-outcome-label">Trust signals</div><div class="cs-outcome-text">Returns and delivery info surfaced early — not hidden at checkout</div></div><div class="cs-outcome-item"><div class="cs-outcome-label">Brand coherence</div><div class="cs-outcome-text">Editorial and transactional experiences now feel like one unified voice</div></div><div class="cs-outcome-item"><div class="cs-outcome-label">Journey loop</div><div class="cs-outcome-text">Lookbook → Product → Trust → Purchase creates a full, closed loop</div></div></div></div>
+  <div class="cs-chapter" style="padding-bottom:160px"><span class="section-label">07 — Reflection</span><h2 class="cs-h2">What I learned.</h2><div style="max-width:640px"><p class="cs-p">The most important insight from this project wasn't about UI at all — it was about <em>information architecture as an emotional experience</em>. Where trust signals appear in a journey matters as much as whether they appear at all.</p><div class="cs-callout"><p>"Design is not just what something looks like. It's whether it works for the person standing in the moment of decision."</p></div></div></div>
+</div>
+
+<!-- ═══ MAIN SCRIPT ══════════════════════════════════ -->
+<script type="module">
+import * as THREE from 'three';
+import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
+
+(function() {
+  'use strict';
+
+  /* ── Globals ── */
+  const gsap = window.gsap;
+  const ScrollTrigger = window.ScrollTrigger;
+  const CustomEase = window.CustomEase;
+  const Lenis = window.Lenis;
+  gsap.registerPlugin(ScrollTrigger);
+  if (CustomEase) gsap.registerPlugin(CustomEase);
+  /* CustomEase: hinge physics — fast wind-up, soft over-shoot, settle */
+  if (CustomEase) {
+    CustomEase.create('hinge', 'M0,0 C0.16,0 0.18,0.18 0.34,0.42 0.5,0.66 0.72,1.04 0.86,1.02 0.94,1.01 1,1 1,1');
+  }
+
+  /* ── Theme ── */
+  const root = document.documentElement;
+  let isDark = localStorage.getItem('theme') !== 'light';
+  function applyTheme(dark) {
+    isDark = dark;
+    root.setAttribute('data-theme', dark ? 'dark' : 'light');
+    document.getElementById('icon-moon').style.display = dark ? 'block' : 'none';
+    document.getElementById('icon-sun').style.display  = dark ? 'none'  : 'block';
+    localStorage.setItem('theme', dark ? 'dark' : 'light');
+    if (typeof syncTheme === 'function') syncTheme(dark);
+  }
+  document.getElementById('theme-toggle').addEventListener('click', () => applyTheme(!isDark));
+  /* (syncTheme is hoisted; initial apply happens after scene is built — see bottom) */
+
+  /* ── Lenis smooth scroll ── */
+  const lenis = new Lenis({
+    duration: 1.3,
+    easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    smoothWheel: true,
+  });
+  gsap.ticker.add(time => lenis.raf(time * 1000));
+  gsap.ticker.lagSmoothing(0);
+
+  /* ── Easing helpers (used throughout) ── */
+  const easeOut3   = t => 1 - Math.pow(1 - t, 3);
+  const easeOut4   = t => 1 - Math.pow(1 - t, 4);
+  const easeIn3    = t => t * t * t;
+  const easeInOut3 = t => t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2;
+  const easeInOut4 = t => t < 0.5 ? 8*t*t*t*t : 1 - Math.pow(-2*t+2, 4)/2;
+  const lerp       = (a, b, t) => a + (b - a) * t;
+  const clamp01    = v => Math.max(0, Math.min(1, v));
+  const remap      = (v, a, b) => clamp01((v - a) / (b - a));
+  /* Hinge ease: fast pickup, gentle slowdown, micro overshoot */
+  const easeHinge = t => {
+    if (t <= 0) return 0; if (t >= 1) return 1;
+    const base = 1 - Math.pow(1 - t, 3.2);
+    const overshoot = Math.sin(t * Math.PI) * 0.025 * (1 - Math.pow(1 - t, 2));
+    return Math.min(1.03, base + overshoot);
+  };
+
+  /* ══════════════════════════════════════════════════════════════
+     THREE.JS HERO SCENE
+     ────────────────────────────────────────────────────────────
+     Cinematic MacBook with PBR materials, soft shadows,
+     environment reflections, RectAreaLight, and a live CSS3D
+     screen surface rendering the actual portfolio HTML.
+     ══════════════════════════════════════════════════════════════ */
+  RectAreaLightUniformsLib.init();
+
+  const heroEl     = document.getElementById('hero');
+  const screenSpill= document.getElementById('screen-spill');
+  const scrollInd  = document.getElementById('scroll-indicator');
+  const webglWrap  = document.getElementById('webgl-container');
+  const cssWrap    = document.getElementById('css3d-container');
+
+  /* ── Renderers ── */
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(heroEl.clientWidth, heroEl.clientHeight);
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.05;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.setClearColor(0x000000, 0);
+  webglWrap.appendChild(renderer.domElement);
+
+  const cssRenderer = new CSS3DRenderer();
+  cssRenderer.setSize(heroEl.clientWidth, heroEl.clientHeight);
+  cssRenderer.domElement.style.position = 'absolute';
+  cssRenderer.domElement.style.inset = '0';
+  cssRenderer.domElement.style.pointerEvents = 'none';
+  cssWrap.appendChild(cssRenderer.domElement);
+
+  /* ── Scene & Camera ── */
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(32, heroEl.clientWidth / heroEl.clientHeight, 0.1, 100);
+  camera.position.set(0, 1.05, 7.4);
+  camera.lookAt(0, 0.6, 0);
+
+  /* ── Environment (procedural room → IBL) ── */
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  const envScene = new RoomEnvironment();
+  const envTex = pmrem.fromScene(envScene, 0.04).texture;
+  scene.environment = envTex;
+  /* No background — keeps page bg visible behind the laptop */
+
+  /* ── Lighting ── */
+  const hemi = new THREE.HemisphereLight(0xb8c6ff, 0x0a0a12, 0.55);
+  scene.add(hemi);
+
+  const keyLight = new THREE.DirectionalLight(0xffffff, 1.7);
+  keyLight.position.set(3.4, 5.5, 4.2);
+  keyLight.castShadow = true;
+  keyLight.shadow.mapSize.set(2048, 2048);
+  keyLight.shadow.camera.near = 0.5;
+  keyLight.shadow.camera.far = 18;
+  keyLight.shadow.camera.left = -4;
+  keyLight.shadow.camera.right = 4;
+  keyLight.shadow.camera.top = 3;
+  keyLight.shadow.camera.bottom = -3;
+  keyLight.shadow.bias = -0.0002;
+  keyLight.shadow.normalBias = 0.02;
+  keyLight.shadow.radius = 6;
+  scene.add(keyLight);
+
+  const fillLight = new THREE.DirectionalLight(0x7fa6ff, 0.35);
+  fillLight.position.set(-4.5, 2.0, 2.5);
+  scene.add(fillLight);
+
+  const rimLight = new THREE.DirectionalLight(0xffffff, 0.7);
+  rimLight.position.set(-2.5, 1.5, -4);
+  scene.add(rimLight);
+
+  /* Big soft area light overhead — premium specular highlight on the lid */
+  const areaLight = new THREE.RectAreaLight(0xffffff, 4.0, 6, 3);
+  areaLight.position.set(0, 5, 1.5);
+  areaLight.lookAt(0, 0, 0);
+  scene.add(areaLight);
+
+  /* Screen emissive light — fades in as the screen "turns on" */
+  const screenGlow = new THREE.PointLight(0x6aa9ff, 0, 4.5, 2.2);
+  screenGlow.position.set(0, 1.55, 0);
+  scene.add(screenGlow);
+
+  /* ── Materials ── */
+  const aluminumDark = new THREE.MeshPhysicalMaterial({
+    color: 0x1c1c20,
+    metalness: 0.95,
+    roughness: 0.34,
+    clearcoat: 0.55,
+    clearcoatRoughness: 0.45,
+    envMapIntensity: 1.15,
+  });
+  const aluminumLight = new THREE.MeshPhysicalMaterial({
+    color: 0xc7c8cc,
+    metalness: 0.92,
+    roughness: 0.30,
+    clearcoat: 0.55,
+    clearcoatRoughness: 0.4,
+    envMapIntensity: 1.1,
+  });
+  let bodyMat = aluminumDark;
+
+  const keyboardMat = new THREE.MeshStandardMaterial({
+    color: 0x121215, roughness: 0.6, metalness: 0.55,
+  });
+  const trackpadMat = new THREE.MeshPhysicalMaterial({
+    color: 0x1c1c1f, roughness: 0.18, metalness: 0.2,
+    clearcoat: 1.0, clearcoatRoughness: 0.08,
+  });
+  const screenBezelMat = new THREE.MeshStandardMaterial({
+    color: 0x05050a, roughness: 0.42, metalness: 0.3,
+  });
+  const screenPanelMat = new THREE.MeshBasicMaterial({
+    color: 0x000000, transparent: true, opacity: 0.96,
+  });
+  const appleLogoMat = new THREE.MeshStandardMaterial({
+    color: 0x9fbcff, emissive: 0x4f8ef7, emissiveIntensity: 0.0,
+    roughness: 0.35, metalness: 0.4,
+  });
+
+  /* Rounded box utility for soft edges */
+  function roundedBox(width, height, depth, radius, segments) {
+    const r = Math.min(radius, Math.min(width, height, depth) * 0.5 - 0.001);
+    const shape = new THREE.Shape();
+    const w = width / 2, h = height / 2;
+    shape.moveTo(-w + r, -h);
+    shape.lineTo(w - r, -h);
+    shape.quadraticCurveTo(w, -h, w, -h + r);
+    shape.lineTo(w, h - r);
+    shape.quadraticCurveTo(w, h, w - r, h);
+    shape.lineTo(-w + r, h);
+    shape.quadraticCurveTo(-w, h, -w, h - r);
+    shape.lineTo(-w, -h + r);
+    shape.quadraticCurveTo(-w, -h, -w + r, -h);
+    const geo = new THREE.ExtrudeGeometry(shape, {
+      depth: depth, bevelEnabled: true,
+      bevelThickness: r * 0.55, bevelSize: r * 0.55,
+      bevelSegments: segments || 4, curveSegments: segments || 8,
+      steps: 1,
+    });
+    geo.translate(0, 0, -depth / 2);
+    geo.computeVertexNormals();
+    return geo;
+  }
+
+  /* ── MacBook hierarchy ──
+     World scale: base ≈ 3.2 units wide, 2.2 deep, 0.18 tall.
+     Lid pivot sits at the rear-top corner of the base.        */
+  const macbook = new THREE.Group();
+  macbook.position.y = 0.0;
+  scene.add(macbook);
+
+  /* — BASE — */
+  const base = new THREE.Mesh(
+    roundedBox(3.2, 0.18, 2.2, 0.06, 6),
+    bodyMat
+  );
+  base.castShadow = true;
+  base.receiveShadow = true;
+  macbook.add(base);
+
+  /* Keyboard recess */
+  const keyboard = new THREE.Mesh(
+    new THREE.BoxGeometry(2.7, 0.02, 1.35),
+    keyboardMat
+  );
+  keyboard.position.set(0, 0.095, -0.1);
+  keyboard.receiveShadow = true;
+  macbook.add(keyboard);
+
+  /* Tiny key bumps — InstancedMesh for performance */
+  const keyGeo = new THREE.BoxGeometry(0.085, 0.012, 0.085);
+  const keyMat = new THREE.MeshStandardMaterial({ color: 0x18181c, roughness: 0.7, metalness: 0.4 });
+  const COLS = 24, ROWS = 6;
+  const keys = new THREE.InstancedMesh(keyGeo, keyMat, COLS * ROWS);
+  const km = new THREE.Matrix4();
+  let i = 0;
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const x = -1.18 + (c / (COLS - 1)) * 2.36;
+      const z = -0.6 + (r / (ROWS - 1)) * 1.0;
+      km.makeTranslation(x, 0.105, z - 0.1);
+      keys.setMatrixAt(i++, km);
+    }
+  }
+  keys.castShadow = false;
+  keys.receiveShadow = true;
+  macbook.add(keys);
+
+  /* Trackpad */
+  const trackpad = new THREE.Mesh(
+    new THREE.BoxGeometry(1.25, 0.014, 0.78),
+    trackpadMat
+  );
+  trackpad.position.set(0, 0.097, 0.62);
+  trackpad.receiveShadow = true;
+  macbook.add(trackpad);
+
+  /* — LID PIVOT — at rear top edge of base */
+  const lidPivot = new THREE.Group();
+  lidPivot.position.set(0, 0.09, -1.07);
+  lidPivot.rotation.x = Math.PI / 2 - 0.005; /* CLOSED (lid lies on top of base) */
+  macbook.add(lidPivot);
+
+  /* The lid itself — modeled in OPEN orientation,
+     standing up from the hinge with screen facing +Z. */
+  const lid = new THREE.Group();
+  lidPivot.add(lid);
+
+  /* Lid back (Apple logo side) */
+  const lidPanel = new THREE.Mesh(
+    roundedBox(3.2, 2.05, 0.10, 0.05, 5),
+    bodyMat
+  );
+  /* Position so the bottom edge is at the hinge */
+  lidPanel.position.set(0, 1.025, -0.04);
+  lidPanel.castShadow = true;
+  lidPanel.receiveShadow = true;
+  lid.add(lidPanel);
+
+  /* Apple logo on lid back (slight glow when open) */
+  const appleLogo = new THREE.Mesh(
+    new THREE.CircleGeometry(0.18, 48),
+    appleLogoMat
+  );
+  appleLogo.position.set(0, 1.05, -0.095);
+  appleLogo.rotation.y = Math.PI;
+  lid.add(appleLogo);
+
+  /* Screen bezel — sits on the front face of the lid */
+  const bezel = new THREE.Mesh(
+    new THREE.BoxGeometry(3.06, 1.92, 0.012),
+    screenBezelMat
+  );
+  bezel.position.set(0, 1.025, 0.015);
+  lid.add(bezel);
+
+  /* Screen panel (the dark backdrop for the live HTML screen) */
+  const screenPanel = new THREE.Mesh(
+    new THREE.PlaneGeometry(2.92, 1.78),
+    screenPanelMat
+  );
+  screenPanel.position.set(0, 1.025, 0.022);
+  lid.add(screenPanel);
+
+  /* Camera notch */
+  const notch = new THREE.Mesh(
+    new THREE.BoxGeometry(0.34, 0.06, 0.012),
+    new THREE.MeshStandardMaterial({ color: 0x000000, roughness: 0.6 })
+  );
+  notch.position.set(0, 1.97, 0.025);
+  lid.add(notch);
+
+  /* ── CSS3D screen — actual portfolio HTML rendered in 3D ──
+     The .screen-ui DOM is authored at 1280×800 px. We scale
+     the CSS3DObject so that 1280 px → 2.92 world units (matching
+     the screen panel width). Scale factor = 2.92 / 1280 ≈ 0.00228. */
+  const screenDOM = document.getElementById('screen-template').content.firstElementChild.cloneNode(true);
+  screenDOM.style.opacity = '0';
+  screenDOM.style.transition = 'opacity 0.45s cubic-bezier(0.16,1,0.3,1)';
+  const SCREEN_SCALE = 2.92 / 1280;
+  const cssScreen = new CSS3DObject(screenDOM);
+  cssScreen.position.set(0, 1.025, 0.024);
+  cssScreen.scale.set(SCREEN_SCALE, SCREEN_SCALE, SCREEN_SCALE);
+  lid.add(cssScreen);
+
+  /* Ground shadow catcher */
+  const ground = new THREE.Mesh(
+    new THREE.PlaneGeometry(20, 20),
+    new THREE.ShadowMaterial({ opacity: 0.42 })
+  );
+  ground.rotation.x = -Math.PI / 2;
+  ground.position.y = -0.65;
+  ground.receiveShadow = true;
+  scene.add(ground);
+
+  /* Subtle contact shadow blob below laptop for grounding */
+  const contactShadowMat = new THREE.MeshBasicMaterial({
+    color: 0x000000, transparent: true, opacity: 0.55,
+    depthWrite: false,
+  });
+  /* Build a soft radial blob via canvas texture */
+  (function makeContactShadow() {
+    const c = document.createElement('canvas');
+    c.width = c.height = 256;
+    const ctx = c.getContext('2d');
+    const g = ctx.createRadialGradient(128, 128, 30, 128, 128, 128);
+    g.addColorStop(0, 'rgba(0,0,0,1)');
+    g.addColorStop(0.5, 'rgba(0,0,0,0.55)');
+    g.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, 256, 256);
+    const tex = new THREE.CanvasTexture(c);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    contactShadowMat.map = tex;
+    contactShadowMat.needsUpdate = true;
+  })();
+  const contactShadow = new THREE.Mesh(
+    new THREE.PlaneGeometry(5.4, 3.4),
+    contactShadowMat
+  );
+  contactShadow.rotation.x = -Math.PI / 2;
+  contactShadow.position.y = -0.45;
+  scene.add(contactShadow);
+
+  /* ── Cinematic initial pose ── */
+  const POSE = {
+    closed: { lidX: Math.PI / 2 - 0.005, camY: 1.05, camZ: 7.4, macRotY: -0.08, macRotX: 0.04, lookY: 0.6, scrnOp: 0, glowI: 0, apple: 0 },
+    open:   { lidX: -0.18,                camY: 1.05, camZ: 7.4, macRotY:  0.00, macRotX: 0.00, lookY: 0.85, scrnOp: 1, glowI: 1.6, apple: 0 },
+    zoom:   { lidX: -0.18,                camY: 1.05, camZ: 2.05, macRotY: 0.0,  macRotX: 0.0,  lookY: 1.025, scrnOp: 1, glowI: 2.2, apple: 0 },
+  };
+  /* Apply initial pose */
+  lidPivot.rotation.x = POSE.closed.lidX;
+  macbook.rotation.y  = POSE.closed.macRotY;
+  macbook.rotation.x  = POSE.closed.macRotX;
+  appleLogoMat.emissiveIntensity = 0.0;
+  screenGlow.intensity = 0;
+
+  /* Cache reusable lookAt target */
+  const lookTarget = new THREE.Vector3(0, POSE.closed.lookY, 0);
+
+  /* ── Theme sync ── */
+  function syncTheme(dark) {
+    bodyMat = dark ? aluminumDark : aluminumLight;
+    base.material = bodyMat;
+    lidPanel.material = bodyMat;
+    appleLogoMat.color.set(dark ? 0x9fbcff : 0x4060c0);
+    hemi.intensity = dark ? 0.55 : 0.85;
+    keyLight.intensity = dark ? 1.7 : 1.4;
+    rimLight.intensity = dark ? 0.7 : 0.35;
+    renderer.toneMappingExposure = dark ? 1.05 : 1.15;
+    ground.material.opacity = dark ? 0.42 : 0.18;
+  }
+
+  /* ── Resize ── */
+  function resize() {
+    const w = heroEl.clientWidth, h = heroEl.clientHeight;
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
+    cssRenderer.setSize(w, h);
+  }
+  window.addEventListener('resize', resize);
+
+  /* ── Mouse parallax (cinematic camera breathing) ── */
+  let mouseX = 0, mouseY = 0, parallaxX = 0, parallaxY = 0;
+  window.addEventListener('mousemove', e => {
+    mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+    mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+  });
+
+  /* ── Scroll-driven state ── */
+  let scrollP = 0;
+  let needsRender = true;
+
+  /* ══════════════════════════════════════════════════════════════
+     HERO SCROLL ANIMATION — cinematic, Apple-style choreography
+     ════════════════════════════════════════════════════════════ */
+  ScrollTrigger.create({
+    trigger: '#hero',
+    start: 'top top',
+    end: '+=420%',          /* longer pin → unhurried motion */
+    pin: true,
+    pinSpacing: true,
+    scrub: 1.6,
+    onUpdate(self) {
+      scrollP = self.progress;
+      needsRender = true;
+    }
+  });
+
+  function applyScroll(p) {
+    /* ── Phase A · 0.00 → 0.55 — Lid opens (Apple-style hinge) ── */
+    {
+      const t = remap(p, 0.02, 0.55);
+      const e = easeHinge(t);
+      lidPivot.rotation.x = lerp(POSE.closed.lidX, POSE.open.lidX, e);
+    }
+
+    /* ── Phase B · 0.06 → 0.5 — Subtle laptop rotation reveal ── */
+    {
+      const t = remap(p, 0.06, 0.5);
+      const e = easeInOut4(t);
+      macbook.rotation.y = lerp(POSE.closed.macRotY, POSE.open.macRotY, e);
+      macbook.rotation.x = lerp(POSE.closed.macRotX, POSE.open.macRotX, e);
+    }
+
+    /* ── Phase C · 0.30 → 0.6 — Screen wakes up ── */
+    {
+      const t = remap(p, 0.30, 0.6);
+      const e = easeOut3(t);
+      screenDOM.style.opacity = String(e);
+      screenGlow.intensity = lerp(0, POSE.open.glowI, e);
+      appleLogoMat.emissiveIntensity = lerp(0, 0.45, e);
+      screenSpill.style.opacity = String(e * 0.8);
+      /* Brighten screen panel slightly so edges blend with HTML */
+      screenPanelMat.color.setRGB(lerp(0, 0.04, e), lerp(0, 0.05, e), lerp(0, 0.08, e));
+    }
+
+    /* ── Phase D · 0.55 → 0.88 — Cinematic dolly into the screen ── */
+    {
+      const t = remap(p, 0.55, 0.88);
+      const e = easeInOut4(t);
+      camera.position.z = lerp(POSE.open.camZ, POSE.zoom.camZ, e);
+      camera.position.y = lerp(POSE.open.camY, POSE.zoom.camY, e);
+      lookTarget.y      = lerp(POSE.open.lookY, POSE.zoom.lookY, e);
+    }
+
+    /* ── Phase E · 0.86 → 1.0 — Hand-off to portfolio ── */
+    {
+      const t = remap(p, 0.86, 1.0);
+      const e = easeIn3(t);
+      heroEl.style.opacity = String(1 - e);
+    }
+
+    /* Scroll indicator fades very quickly */
+    if (scrollInd) scrollInd.style.opacity = String(Math.max(0, 1 - p * 24));
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+     RENDER LOOP — idle ambient motion + camera parallax + render
+     ════════════════════════════════════════════════════════════ */
+  const clock = new THREE.Clock();
+  let lastP = -1;
+
+  function tick() {
+    const t = clock.getElapsedTime();
+
+    /* Apply scroll-driven choreography */
+    if (scrollP !== lastP || needsRender) {
+      applyScroll(scrollP);
+      lastP = scrollP;
+      needsRender = false;
+    }
+
+    /* — Idle ambient breathing (only when laptop is mostly closed) — */
+    const idle = 1 - clamp01(scrollP * 6);
+    if (idle > 0.001) {
+      /* Gentle Y-rotation breathing */
+      macbook.rotation.y += Math.sin(t * 0.55) * 0.00045 * idle;
+      /* Subtle vertical bob */
+      macbook.position.y = Math.sin(t * 0.7) * 0.012 * idle;
+    } else {
+      macbook.position.y = 0;
+    }
+
+    /* — Mouse parallax on camera (fades out as we zoom in) — */
+    const parallaxStrength = 1 - clamp01((scrollP - 0.5) * 4);
+    parallaxX += (mouseX - parallaxX) * 0.04;
+    parallaxY += (mouseY - parallaxY) * 0.04;
+    camera.position.x = parallaxX * 0.35 * parallaxStrength;
+    /* Keep camera looking at the screen / lookTarget */
+    camera.lookAt(lookTarget);
+
+    renderer.render(scene, camera);
+    cssRenderer.render(scene, camera);
+    requestAnimationFrame(tick);
+  }
+  tick();
+
+  /* Initial sync once everything is wired */
+  applyTheme(isDark);
+  applyScroll(0);
+  resize();
+
+  /* ── Section entrance animations ── */
+  gsap.from('.works-header', {
+    y: 40, opacity: 0, duration: 0.8, ease: 'power3.out',
+    scrollTrigger: { trigger: '#works', start: 'top 85%', once: true }
+  });
+  gsap.from('.work-card', {
+    y: 70, opacity: 0, duration: 0.9, stagger: 0.12, ease: 'power3.out',
+    scrollTrigger: { trigger: '#works', start: 'top 80%', once: true }
+  });
+  gsap.from('.about-photo-wrap', {
+    x: -50, opacity: 0, scale: 0.94, duration: 1.0, ease: 'power3.out',
+    scrollTrigger: { trigger: '#about', start: 'top 75%', once: true }
+  });
+  gsap.from('.about-content > *', {
+    y: 30, opacity: 0, duration: 0.75, stagger: 0.1, ease: 'power3.out',
+    scrollTrigger: { trigger: '#about', start: 'top 75%', once: true }
+  });
+  gsap.from('.contact-inner > *', {
+    y: 40, opacity: 0, duration: 0.8, stagger: 0.1, ease: 'power3.out',
+    scrollTrigger: { trigger: '#contact', start: 'top 80%', once: true }
+  });
+
+  /* ── Card 3D tilt ── */
+  document.querySelectorAll('.work-card').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const r = card.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width  - 0.5;
+      const y = (e.clientY - r.top)  / r.height - 0.5;
+      card.style.transform = `perspective(1000px) rotateY(${x*10}deg) rotateX(${-y*6}deg) translateY(-8px)`;
+    });
+    card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+  });
+
+  /* ── Custom cursor ── */
+  const cursor     = document.getElementById('cursor');
+  const cursorRing = document.getElementById('cursor-ring');
+  let mx=0, my=0, cx=0, cy=0, rx=0, ry=0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  document.addEventListener('mousedown', () => document.body.classList.add('cursor-active'));
+  document.addEventListener('mouseup',   () => document.body.classList.remove('cursor-active'));
+  const hoverSel = 'a, button, .work-card, .skill-tag, .social-link, input, textarea, [role="button"]';
+  document.querySelectorAll(hoverSel).forEach(el => {
+    el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+    el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+  });
+  (function loop() {
+    requestAnimationFrame(loop);
+    cx += (mx - cx) * 0.18; cy += (my - cy) * 0.18;
+    rx += (mx - rx) * 0.09; ry += (my - ry) * 0.09;
+    cursor.style.left     = cx + 'px'; cursor.style.top      = cy + 'px';
+    cursorRing.style.left = rx + 'px'; cursorRing.style.top  = ry + 'px';
+  })();
+
+  /* ── Magnetic buttons ── */
+  document.querySelectorAll('.magnetic-btn').forEach(btn => {
+    btn.addEventListener('mousemove', e => {
+      const r = btn.getBoundingClientRect();
+      const bx = (e.clientX - r.left - r.width/2)  * 0.3;
+      const by = (e.clientY - r.top  - r.height/2) * 0.3;
+      btn.style.transform = `translate(${bx}px, ${by}px)`;
+    });
+    btn.addEventListener('mouseleave', () => {
+      btn.style.transition = 'transform 0.5s cubic-bezier(0.16,1,0.3,1)';
+      btn.style.transform = '';
+      setTimeout(() => { btn.style.transition = ''; }, 520);
+    });
+  });
+
+  /* ── Nav scroll ── */
+  const nav = document.getElementById('main-nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+    const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+    document.getElementById('scroll-progress').style.transform = `scaleX(${pct})`;
+    document.getElementById('scroll-top').classList.toggle('visible', window.scrollY > window.innerHeight * 0.6);
+  });
+
+  /* ── Scroll to top ── */
+  document.getElementById('scroll-top').addEventListener('click', () => lenis.scrollTo(0, { duration: 1.5 }));
+
+  /* ── Case study modal ── */
+  const modal = document.getElementById('case-study-modal');
+  function openModal()  { modal.classList.add('open');    document.body.style.overflow='hidden'; lenis.stop();  modal.scrollTop=0; }
+  function closeModal() { modal.classList.remove('open'); document.body.style.overflow='';       lenis.start(); }
+  document.getElementById('card-vv').addEventListener('click', openModal);
+  document.getElementById('card-vv').addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' ') openModal(); });
+  document.getElementById('modal-close').addEventListener('click', closeModal);
+  document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+
+  /* ── Smooth scroll for nav links ── */
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) { e.preventDefault(); lenis.scrollTo(target, { offset: -80, duration: 1.4 }); }
+    });
+  });
+
+  /* ── Form submit ── */
+  window.handleFormSubmit = function(e) {
+    e.preventDefault();
+    const name = document.getElementById('f-name').value;
+    const email = document.getElementById('f-email').value;
+    const msg   = document.getElementById('f-msg').value;
+    window.location.href = `mailto:inka3553@gmail.com?subject=Portfolio enquiry from ${encodeURIComponent(name)}&body=${encodeURIComponent(msg+'\n\nReply to: '+email)}`;
+  };
+
+})();
+</script>
+</body>
+</html>
